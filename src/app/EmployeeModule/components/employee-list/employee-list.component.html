@@ -1,0 +1,86 @@
+<!-- <table>
+  <thead>
+    <tr>
+      <th>Employee Name</th>
+      <th>Designation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let employee of employees">
+      <td>{{ employee.employeeName }}</td>
+      <td>{{ employee.designationName || 'N/A' }}</td>
+    </tr>
+  </tbody>
+</table> -->
+
+<!-- <div>
+  <label for="designationFilter">Filter by Designation:</label>
+  <select id="designationFilter" [(ngModel)]="selectedDesignation" (change)="onDesignationChange()">
+    <option *ngFor="let designation of designationList" [value]="designation">
+      {{ designation }}
+    </option>
+  </select>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Employee Name</th>
+      <th>Designation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let employee of filteredEmployees">
+      <td>{{ employee.employeeName }}</td>
+      <td>{{ employee.designationName || 'N/A' }}</td>
+    </tr>
+  </tbody>
+</table> -->
+
+<!-- <div class="filter-container">
+  <label for="designationFilter">Filter by Designation:</label>
+  <select id="designationFilter" [(ngModel)]="selectedDesignation" (change)="onDesignationChange()">
+    <option *ngFor="let designation of designationList" [value]="designation">
+      {{ designation }}
+    </option>
+  </select>
+</div>
+
+<div class="table-container">
+  <table class="employee-table">
+    <thead>
+      <tr>
+        <th>Employee Id</th>
+        <th>Employee Name</th>
+        <th>Designation</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let employee of filteredEmployees">
+        <td>{{employee.id}}</td>
+        <td>{{ employee.employeeName }}</td>
+        <td>{{ employee.designationName || 'N/A' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div> -->
+
+<div class="filter-container mb-3">
+  <label for="designationFilter" class="form-label">Filter by Designation:</label>
+  <select id="designationFilter" class="form-select" [(ngModel)]="selectedDesignation" (change)="onDesignationChange()">
+    <option *ngFor="let designation of designationList" [value]="designation">
+      {{ designation }}
+    </option>
+  </select>
+</div>
+
+<div class="list-container">
+  <ul class="list-group">
+    <li class="list-group-item" *ngFor="let employee of filteredEmployees">
+      <div class="fw-bold">Employee Name: {{ employee.employeeName }}</div>
+      <div>ID: {{ employee.id }}</div>
+      <div>Designation: {{ employee.designationName || 'N/A' }}</div>
+    </li>
+  </ul>
+</div>
+
