@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { EmployeeDTO } from '../models/employee.dto';
+import { EmployeeDetailsDTO } from '../models/employeeDetails';
 
 
 @Injectable({
@@ -9,11 +10,25 @@ import { EmployeeDTO } from '../models/employee.dto';
 })
 export class EmployeeService {
 
-  private apiUrl = 'http://localhost:5045/api/employee?IdClient=10001001';
 
-  constructor(private http: HttpClient) {}
+        private baseUrl = 'http://localhost:5045/api/employee';
+        private clientId = '10001001';
 
- getAllEmployees(): Observable<EmployeeDTO[]> {
-  return this.http.get<EmployeeDTO[]>(this.apiUrl);
-}
+        constructor(private http: HttpClient) {}
+
+      
+          getAllEmployees(): Observable<EmployeeDTO[]> {
+         return this.http.get<EmployeeDTO[]>(`${this.baseUrl}?IdClient=${this.clientId}`);
+        }
+
+          getEmployeeById(id: number): Observable<EmployeeDetailsDTO> {
+          return this.http.get<EmployeeDetailsDTO>(`${this.baseUrl}/detail?IdClient=${this.clientId}&id=${id}`);
+        }
+
+          createEmployee(employee: EmployeeDetailsDTO) {
+          return this.http.post(this.baseUrl, employee); // Update URL as needed
+        }
+
+    
+
 }
