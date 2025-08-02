@@ -1,22 +1,26 @@
 <div class="container-fluid">
 
   <div class="d-flex justify-content-end mt-3 mb-2">
-  <button class="btn btn-primary mb-3" (click)="onAddNew()">Add New</button>
 
+    <button class="btn btn-primary mb-3" (click)="onAddNew()">Add New</button>
 
   </div>
+
   <div class="row">
     <!-- Left column with fixed height and scroll -->
     <div class="col-2" style="height: 90vh; overflow-y: auto;">
       <!-- Filter -->
       <div class="mb-3">
-        <label for="designationFilter" class="form-label">Filter by Designation:</label>
-        <select id="designationFilter" class="form-select" [(ngModel)]="selectedDesignation" (change)="onDesignationChange()">
-          <option *ngFor="let designation of designationList" [value]="designation">
-            {{ designation }}
-          </option>
-        </select>
-      </div>
+      <label for="designationFilter" class="form-label">Filter by Designation:</label>
+        <form [formGroup]="filterForm">
+          <select id="designationFilter" class="form-select" formControlName="selectedDesignation">
+            <option value="">All</option>
+            <option *ngFor="let designation of designationList" [value]="designation">
+              {{ designation }}
+            </option>
+          </select>
+        </form>
+    </div>
 
       <!-- Scrollable List -->
       <ul class="list-group">
@@ -24,6 +28,7 @@
           class="list-group-item" 
           *ngFor="let employee of filteredEmployees"
           (click)="viewEmployeeDetails(employee.id)" 
+          [ngClass]="{'active': selectedEmployeeId === employee.id}"
           style="cursor: pointer;">
           <div class="fw-bold">Employee Name: {{ employee.employeeName }}</div>
           <div>ID: {{ employee.id }}</div>
@@ -33,295 +38,43 @@
     </div>
 
     <!-- Right side -->
-   <div class="col-10">
-      <form *ngIf="selectedEmployee" class="p-3">
-        <div class="row mb-3">
-          <div class="col-md-3">
-            <label>Name</label>
-            <input type="text" class="form-control" [(ngModel)]="selectedEmployee.employeeName" name="employeeName" />
-          </div>
-          <div class="col-md-3">
-            <label>Designation</label>
-            <input type="text" class="form-control" [(ngModel)]="selectedEmployee.employeeNameBangla" name="employeeNameBangla" />
-          </div>
-          <div class="col-md-3">
-            <label>Fathername</label>
-            <input type="text" class="form-control" [(ngModel)]="selectedEmployee.fatherName" name="fatherName" />
-          </div>
-          <div class="col-md-3">
-            <label>MotherName</label>
-            <input type="text" class="form-control" [(ngModel)]="selectedEmployee.motherName" name="motherName" />
-          </div>
-        </div>
-
-
-        <div class="row mb-3">
-          <div class="col-md-3">
-            <label>Birth Date</label>
-            <input type="date" class="form-control" [(ngModel)]="selectedEmployee.birthDate" name="birthDate" />
-          </div>
-          <div class="col-md-3">
-            <label>Joining Date</label>
-            <input type="date" class="form-control" [(ngModel)]="selectedEmployee.joiningDate" name="joiningDate" />
-          </div>
-          <div class="col-md-3">
-            <label>Contact No</label>
-            <input type="text" class="form-control" [(ngModel)]="selectedEmployee.contactNo" name="contactNo" />
-          </div>
-          <div class="col-md-3">
-            <label>National ID</label>
-            <input type="text" class="form-control" [(ngModel)]="selectedEmployee.nationalIdentificationNumber" name="nationalIdentificationNumber" />
-          </div>
-        </div>
-
-
-
-
-        <div class="row mb-3">
-            <div class="col-md-3">
-              <label>Address</label>
-              <input type="text" class="form-control" [(ngModel)]="selectedEmployee.address" name="address" />
-            </div>
-            <div class="col-md-3">
-              <label>Present Address</label>
-              <input type="text" class="form-control" [(ngModel)]="selectedEmployee.presentAddress" name="presentAddress" />
-            </div>
-            <div class="col-md-3">
-              <label>has over time?</label>
-              <input type="text" class="form-control" [(ngModel)]="selectedEmployee.hasOvertime" name="hasOvertime" />
-            </div>
-            <div class="col-md-3">
-              <label>hasAttendenceBonus?</label>
-              <input type="text" class="form-control" [(ngModel)]="selectedEmployee.hasAttendenceBonus" name="hasAttendenceBonus" />
-            </div>
-        </div>
-
-
-        
-        <div class="row mb-3">
-            <div class="col-md-3">
-              <label>IsActive?</label>
-              <input type="text" class="form-control" [(ngModel)]="selectedEmployee.isActive" name="isActive" />
-            </div>
-            <div class="col-md-3">
-               <label>Department</label>
-               <!-- Department Dropdown -->
-              <select class="form-control" [(ngModel)]="selectedEmployee.idDepartment" name="idDepartment">
-                <option *ngFor="let d of departments" [value]="d.id">{{ d.text }}</option>
-              </select>
-            </div>
-            <div class="col-md-3">
-               <label>Section</label>
-               <select class="form-control" [(ngModel)]="selectedEmployee.idSection" name="idSection">
-                <option *ngFor="let s of sections" [value]="s.id">{{ s.text }}</option>
-              </select>
-            </div>
-            <div class="col-md-3">
-              <label>Designation</label>
-               <select class="form-control" [(ngModel)]="selectedEmployee.idDesignation" name="idDesignation">
-                <option *ngFor="let d of designations " [value]="d.id">{{ d.text }}</option>
-              </select>
-            </div>
-        </div>
-
-
-
-        <div class="row mb-3">
-            <div class="col-md-3">
-              <label>Job Type</label>
-              <select class="form-control" [(ngModel)]="selectedEmployee.idJobType" name="idJobType">
-                <option *ngFor="let j of jobTypes" [value]="j.id">{{ j.text }}</option>
-              </select>
-            </div>
-            <div class="col-md-3">
-               <label>Reporting Manager</label>
-               <!-- Department Dropdown -->
-              <select class="form-control" [(ngModel)]="selectedEmployee.idEmployeeType" name="idEmployeeType">
-                <option *ngFor="let r of reportingmanagers " [value]="r.id">{{ r.text }}</option>
-              </select>
-            </div>
-            <div class="col-md-3">
-              <label>Employee Type</label>
-              <select class="form-control" [(ngModel)]="selectedEmployee.idEmployeeType" name="idEmployeeType">
-                <option *ngFor="let e of employeeTypes" [value]="e.id">{{ e.text }}</option>
-              </select>
-            </div>
-            <div class="col-md-3">
-              <label>Gender</label>
-              <select class="form-control" [(ngModel)]="selectedEmployee.idGender" name="idGender">
-                <option *ngFor="let g of genders" [value]="g.id">{{ g.text }}</option>
-              </select>
-           </div>
-        </div>
-
-
-
-
-        <div class="row mb-3">
-            <div class="col-md-3">
-              <label>Religion</label>
-              <select class="form-control" [(ngModel)]="selectedEmployee.idReligion" name="idReligion">
-                <option *ngFor="let r of religions" [value]="r.id">{{ r.text }}</option>
-              </select>
-            </div>
-
-            <div class="col-md-3">
-              <label>Week Off</label>
-              <select class="form-control" [(ngModel)]="selectedEmployee.idWeekOff" name="idWeekOff">
-                <option *ngFor="let w of weekOffs" [value]="w.id">{{ w.text }}</option>
-              </select>
-            </div>
-
-            <div class="col-md-3">
-              <label>Marital Status</label>
-              <select class="form-control" [(ngModel)]="selectedEmployee.idMaritalStatus" name="idMaritalStatus">
-                <option *ngFor="let m of maritalStatuses" [value]="m.id">{{ m.text }}</option>
-              </select>
-            </div>
-        </div>
-
-
-      
-      <div class="row">
-        <div class="col-md-6">
-          <h5>Employee Document Info</h5>
-            <table class="table table-bordered">
-              <thead>
-                <tr>
-                  <th>Document Name</th>
-                  <th>File Name</th>
-                  <th>Upload Date</th>
-                  <th>Preview</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let doc of selectedEmployee.employeeDocuments || []">
-                  <td>{{ doc.documentName }}</td>
-                  <td>{{ doc.fileName }}</td>
-                  <td>{{ doc.uploadDate | date:'shortDate' }}</td>
-                  <td>
-                    <a *ngIf="doc.uploadedFileBase64" [href]="doc.uploadedFileBase64" target="_blank">View</a>
-                  </td>
-                </tr>
-                <tr *ngIf="!(selectedEmployee.employeeDocuments?.length)">
-                  <td colspan="4" class="text-center">No documents found</td>
-                </tr>
-              </tbody>
-            </table>
-        </div>
-
-
-
-        <div class="col-md-6">
-          <h5>Employee Education Info</h5>
-          <table class="table table-bordered">
-            <thead>
-              <tr>
-                <th>Level</th>
-                <th>Examination</th>
-                <th>Result</th>
-                <th>CGPA</th>
-                <th>Passing Year</th>
-                <th>Institute</th>
-                <th>Major</th>
-                <th>Duration</th>
-                <th>Achievement</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let edu of selectedEmployee.employeeEducationInfos || []">
-                <td>{{ edu.idEducationLevel }}</td>
-                <td>{{ edu.idEducationExamination }}</td>
-                <td>{{ edu.idEducationResult }}</td>
-                <td>{{ edu.cgpa }}</td>
-                <td>{{ edu.passingYear }}</td>
-                <td>{{ edu.instituteName }}</td>
-                <td>{{ edu.major }}</td>
-                <td>{{ edu.duration }}</td>
-                <td>{{ edu.achievement }}</td>
-              </tr>
-              <tr *ngIf="!(selectedEmployee.employeeEducationInfos?.length)">
-                <td colspan="9" class="text-center">No education info found</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-
-
-      <div class="row">
-        <div class="col-md-6">
-          <h5>Employee Family Info</h5>
-          <table class="table table-bordered table-striped">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Gender</th>
-                <th>Relationship</th>
-                <th>Date of Birth</th>
-                <th>Contact No</th>
-                <th>Current Address</th>
-                <th>Permanent Address</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let family of selectedEmployee.employeefamilyInfos || []">
-                <td>{{ family.name }}</td>
-                <td>{{ getGenderName(family.idGender) }}</td>
-                <td>{{ getRelationshipName(family.idRelationship) }}</td>
-                <td>{{ family.dateOfBirth | date:'shortDate' }}</td>
-                <td>{{ family.contactNo }}</td>
-                <td>{{ family.currentAddress }}</td>
-                <td>{{ family.permanentAddress }}</td>
-              </tr>
-              <tr *ngIf="!(selectedEmployee.employeefamilyInfos?.length)">
-                <td colspan="7" class="text-center">No family info found</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="col-md-6">
-          <h5>Employee Certification Info</h5>
-          <table class="table table-bordered">
-            <thead>
-              <tr>
-                <th>Certification Title</th>
-                <th>Institute</th>
-                <th>Location</th>
-                <th>From Date</th>
-                <th>To Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let cert of selectedEmployee.employeeProfessionalCertifications || []">
-                <td>{{ cert.certificationTitle }}</td>
-                <td>{{ cert.certificationInstitute }}</td>
-                <td>{{ cert.instituteLocation }}</td>
-                <td>{{ cert.fromDate | date: 'yyyy-MM-dd' }}</td>
-                <td>{{ cert.toDate ? (cert.toDate | date: 'yyyy-MM-dd') : 'Present' }}</td>
-              </tr>
-              <tr *ngIf="!(selectedEmployee.employeeProfessionalCertifications?.length)">
-                <td colspan="5" class="text-center">No certification info found</td>
-              </tr>
-            </tbody>
-          </table>
-       </div>
-
-
-
-        
-
-      </div>
-
-                  
-        <button class="btn btn-success mt-3" (click)="onSave()" *ngIf="isCreatingNew">Save</button>
-
-
-        <!-- Add more fields as needed -->
-      </form>
+   <!-- RIGHT SIDE: Form Display -->
+<div class="col-10">
+  <form *ngIf="employeeForm" [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
+    <div class="mb-3">
+      <label class="form-label">Name</label>
+      <input class="form-control" formControlName="employeeName" />
     </div>
+
+    <div class="mb-3">
+      <label class="form-label">FatherName</label>
+      <input class="form-control" formControlName="fatherName" />
+    </div>
+
+    <!-- Education -->
+    <div formArrayName="employeeEducationInfos">
+      <div *ngFor="let edu of educationInfos.controls; let i = index" [formGroupName]="i">
+        <hr />
+        <label>CGPA</label>
+        <input class="form-control" formControlName="cgpa" />
+        <label>ExamScale</label>
+        <input class="form-control" formControlName="examscale" />
+        <label>Marks</label>
+        <input class="form-control" formControlName="marks" />
+        
+        <input class="form-control" formControlName="cgpa" />
+        <label>ExamScale</label>
+        <input class="form-control" formControlName="examscale" />
+        <label>Marks</label>
+        <input class="form-control" formControlName="marks" />
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <button type="submit" class="btn btn-success mt-3">Save</button>
+  </form>
+</div>
+
   </div>
 </div>
 
