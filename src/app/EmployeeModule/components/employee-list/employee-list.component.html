@@ -300,103 +300,147 @@
 
            
 
-          <div class="row">
-            <div class="col-md-12">
-              <label class="fw-bold mb-2">Education Info</label>
-              <div formArrayName="employeeEducationInfos">
-                <table class="table table-bordered table-sm">
-                  <thead class="table-light">
-                    <tr>
-                      <th>#</th>
-                      <th>CGPA</th>
-                      <th>Exam Scale</th>
-                      <th>Marks</th>
-                      <th>major</th>
-                      <th>passingYear</th>
-                      <th>instituteName</th>
-                      <th>duration</th>
-                      <th>achievement</th>
+            <div class="row">
+              <div class="col-md-12">
+                <label class="fw-bold mb-2">Education Info</label>
+                <div formArrayName="employeeEducationInfos">
+                  <table class="table table-bordered table-sm">
+                    <thead class="table-light">
+                      <tr>
+                        <th>#</th>
+                        <th>CGPA</th>
+                        <th>Exam Scale</th>
+                        <th>Marks</th>
+                        <th>major</th>
+                        <th>passingYear</th>
+                        <th>instituteName</th>
+                        <th>duration</th>
+                        <th>achievement</th>
 
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let edu of educationInfos.controls; let i = index" [formGroupName]="i">
-                      <td>{{ i + 1 }}</td>
-                      <td>
-                        <input type="text" class="form-control form-control-sm" formControlName="cgpa" />
-                      </td>
-                      <td>
-                        <input type="text" class="form-control form-control-sm" formControlName="examscale" />
-                      </td>
-                      <td>
-                        <input type="text" class="form-control form-control-sm" formControlName="marks" />
-                      </td>
-                      <td>
-                        <input type="text" class="form-control form-control-sm" formControlName="major" />
-                      </td>
-                      <td>
-                        <input type="text" class="form-control form-control-sm" formControlName="passingYear" />
-                      </td>
-                      <td>
-                        <input type="text" class="form-control form-control-sm" formControlName="instituteName" />
-                      </td>
-                      <td>
-                        <input type="text" class="form-control form-control-sm" formControlName="duration" />
-                      </td>
-                       <td>
-                        <input type="text" class="form-control form-control-sm" formControlName="achievement" />
-                      </td>
-                      
-                    </tr>
-                  </tbody>
-                </table>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let edu of educationInfos.controls; let i = index" [formGroupName]="i">
+                        <td>{{ i + 1 }}</td>
+                        <td>
+                          <input type="text" class="form-control form-control-sm" formControlName="cgpa" />
+                        </td>
+                        <td>
+                          <input type="text" class="form-control form-control-sm" formControlName="examscale" />
+                        </td>
+                        <td>
+                          <input type="text" class="form-control form-control-sm" formControlName="marks" />
+                        </td>
+                        <td>
+                          <input type="text" class="form-control form-control-sm" formControlName="major" />
+                        </td>
+                        <td>
+                          <input type="text" class="form-control form-control-sm" formControlName="passingYear" />
+                        </td>
+                        <td>
+                          <input type="text" class="form-control form-control-sm" formControlName="instituteName" />
+                        </td>
+                        <td>
+                          <input type="text" class="form-control form-control-sm" formControlName="duration" />
+                        </td>
+                        <td>
+                          <input type="text" class="form-control form-control-sm" formControlName="achievement" />
+                        </td>
+                        
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
-          </div>
 
 
 
 
-           <div class="row">
-            <div class="col-md-12">
-              <label class="fw-bold mb-2">Employee Document</label>
-              <div formArrayName="employeeDocument">
-                <table class="table table-bordered table-sm">
-                  <thead class="table-light">
-                    <tr>
-                      <th>#</th>
-                      <th>documentName</th>
-                      <th>filename</th>
-                      <th>uploadDate</th>
-                      <th>uploadedFileExtention</th>
-                      <th>uploadedFileBase64</th>
-                     
+            <div class="row">
+              <div class="col-md-12">
+                <label class="fw-bold mb-2">Employee Document</label>
+                <div formArrayName="employeeDocument">
+                  <table class="table table-bordered table-sm">
+                    <thead class="table-light">
+                      <tr>
+                        <th>#</th>
+                        <th>documentName</th>
+                        <th>filename</th>
+                        <th>uploadDate</th>
+                        <th>uploadedFileExtention</th>
+                        <th>uploadedFileBase64</th>
+                        
 
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let doc of documents.controls; let i = index" [formGroupName]="i">
-                      <td>{{ i + 1 }}</td>
-                      <td>
-                        <input type="text" class="form-control form-control-sm" formControlName="documentName" />
-                      </td>
-                      <td>
-                        <input type="text" class="form-control form-control-sm" formControlName="filename" />
-                      </td>
-                      <td>
-                        <input type="text" class="form-control form-control-sm" formControlName="uploadDate" />
-                      </td>
-                      <td>
-                        <input type="text" class="form-control form-control-sm" formControlName="uploadedFileExtention" />
-                      </td>
-                            
-                      
-                    </tr>
-                  </tbody>
-                </table>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let doc of documents.controls; let i = index" [formGroupName]="i">
+                        <td>{{ i + 1 }}</td>
+                        <td>
+                          <input type="text" class="form-control form-control-sm" formControlName="documentName" />
+                        </td>
+                        <td>
+                          <input type="text" class="form-control form-control-sm" formControlName="filename" />
+                        </td>
+                        <td>
+                          <input type="text" class="form-control form-control-sm" formControlName="uploadDate" />
+                        </td>
+                        <td>
+                          <input type="text" class="form-control form-control-sm" formControlName="uploadedFileExtention" />
+                        </td>
+                              
+                        
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
-          </div>
+
+
+
+
+
+            <div class="row">
+              <div class="col-md-12">
+                <label class="fw-bold mb-2">Employee Professional Certification</label>
+                <div formArrayName="employeeProfessionalCertification">
+                  <table class="table table-bordered table-sm">
+                    <thead class="table-light">
+                      <tr>
+                        <th>#</th>
+                        <th>Certification Title</th>
+                        <th>Certification Institute</th>
+                        <th>Institute Location</th>
+                        <th>From Date</th>
+                        <th>To Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let cert of certifications.controls; let i = index" [formGroupName]="i">
+                        <td>{{ i + 1 }}</td>
+                        <td>
+                          <input type="text" class="form-control form-control-sm" formControlName="certificationTitle" />
+                        </td>
+                        <td>
+                          <input type="text" class="form-control form-control-sm" formControlName="certificationInstitute" />
+                        </td>
+                        <td>
+                          <input type="text" class="form-control form-control-sm" formControlName="instituteLocation" />
+                        </td>
+                        <td>
+                          <input class="form-control" formControlName="fromDate" />
+                        </td>
+                        <td>
+                         <input class="form-control" formControlName="toDate" /> 
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+           </div>
 
 
 
@@ -404,65 +448,70 @@
 
 
 
-         <div class="row">
-            <div class="col-md-12">
-              <label class="fw-bold mb-2">Employee Family Info</label>
-              <div formArrayName="employeeFamilyInfo">
-                <table class="table table-bordered table-sm">
-                  <thead class="table-light">
-                    <tr>
-                      <th>#</th>
-                      <th>Name</th>
-                      <th>Gender</th>
-                      <th>Relationship</th>
-                      <th>Date of Birth</th>
-                      <th>Contact No</th>
-                      <th>Current Address</th>
-                      <th>Permanent Address</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let family of familyInfos.controls; let i = index" [formGroupName]="i">
-                      <td>{{ i + 1 }}</td>
-                      <td>
-                        <input type="text" class="form-control form-control-sm" formControlName="name" />
-                      </td>
-                          <div class="col-3 mb-3">
-                            <label for="idGender"></label>
-                            <select formControlName="idGender" class="form-control">
-                              <option value="">-- Select Genders Type --</option>
-                              <option *ngFor="let gender of genders" [value]="gender.id">{{ gender.text }}</option>
-                            </select>
-                         </div>
-                      <td>
-                         <div class="col-3 mb-3">
-                            <label for="idRelationship"></label>
-                            <select formControlName="idRelationship" class="form-control">
-                              <option value="">-- Select Genders Type --</option>
-                              <option *ngFor="let relation of relationships" [value]="relation.id">{{ relation.text }}</option>
-                            </select>
-                         </div>
-                      </td>
-                      <td>
-                        <input type="text" class="form-control form-control-sm" formControlName="dateOfBirth" />
-                      </td>
-                      <td>
-                        <input type="text" class="form-control form-control-sm" formControlName="contactNo" />
-                      </td>
-                      <td>
-                        <input type="text" class="form-control form-control-sm" formControlName="currentAddress" />
-                      </td>
-                      <td>
-                        <input type="text" class="form-control form-control-sm" formControlName="permanentAddress" />
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+
+        
+
+            
+            <div class="row">
+              <div class="col-md-12">
+                <label class="fw-bold mb-2">Employee Family Info</label>
+                <div formArrayName="employeeFamilyInfo">
+                  <table class="table table-bordered table-sm">
+                    <thead class="table-light">
+                      <tr>
+                        <th>#</th>
+                        <th>Name</th>
+                        <th>Gender</th>
+                        <th>Relationship</th>
+                        <th>Date of Birth</th>
+                        <th>Contact No</th>
+                        <th>Current Address</th>
+                        <th>Permanent Address</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let family of familyInfos.controls; let i = index" [formGroupName]="i">
+                        <td>{{ i + 1 }}</td>
+
+                        <td>
+                          <input type="text" class="form-control form-control-sm" formControlName="name" />
+                        </td>
+
+                        <td>
+                          <select formControlName="idGender" class="form-control form-control-sm">
+                            <option value="">-- Select Gender --</option>
+                            <option *ngFor="let gender of genders" [value]="gender.id">{{ gender.text }}</option>
+                          </select>
+                        </td>
+
+                        <td>
+                          <select formControlName="idRelationship" class="form-control form-control-sm">
+                            <option value="">-- Select Relationship --</option>
+                            <option *ngFor="let relation of relationships" [value]="relation.id">{{ relation.text }}</option>
+                          </select>
+                        </td>
+
+                        <td>
+                          <input type="date" class="form-control form-control-sm" formControlName="dateOfBirth" />
+                        </td>
+
+                        <td>
+                          <input type="text" class="form-control form-control-sm" formControlName="contactNo" />
+                        </td>
+
+                        <td>
+                          <input type="text" class="form-control form-control-sm" formControlName="currentAddress" />
+                        </td>
+
+                        <td>
+                          <input type="text" class="form-control form-control-sm" formControlName="permanentAddress" />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
-         </div>
-
-
 
 
 

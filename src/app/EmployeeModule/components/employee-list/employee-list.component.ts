@@ -268,10 +268,10 @@ export class EmployeeListComponent implements OnInit {
       name: [f.name || '', Validators.required],
       idGender: [f.idGender || ''],
       idRelationship: [f.idRelationship || ''],
-      dateOfBirth: [f.dateOfBirth || ''],
-      contactNo: [f.contactNo || ''],
-      currentAddress: [f.currentAddress || ''],
-      permanentAddress: [f.permanentAddress || ''],
+      dateOfBirth: [f?.dateOfBirth || ''],
+      contactNo: [f?.contactNo || ''],
+      currentAddress: [f?.currentAddress || ''],
+      permanentAddress: [f?.permanentAddress || ''],
 
 
 
@@ -281,7 +281,15 @@ export class EmployeeListComponent implements OnInit {
   buildCertificationForm(c: Partial<EmployeeProfessionalCertificationDTO>): FormGroup {
     return this.fb.group({
       certificationTitle: [c.certificationTitle || '', Validators.required],
-      certificationInstitute: [c.certificationInstitute || '']
+      certificationInstitute: [c.certificationInstitute || ''],
+      instituteLocation: [c.instituteLocation || ''],
+      fromDate: [c.fromDate || ''],
+      toDate: [c.toDate || ''],
+      
+        
+
+
+
     });
   }
 
@@ -340,5 +348,8 @@ onImageSelected(event: Event): void {
     reader.readAsDataURL(file); // triggers onload
   }
 }
+
+
+
 
 }
