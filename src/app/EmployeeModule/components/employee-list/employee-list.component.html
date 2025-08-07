@@ -42,7 +42,7 @@
     
     <div class="col-10">
     
-          <form *ngIf="employeeForm" [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
+          <form *ngIf="employeeForm" [formGroup]="employeeForm" (ngSubmit)="onSubmit()"  enctype="multipart/form-data">
 
             <div class="row">
                <div class="col-3 mb-3">
@@ -70,12 +70,13 @@
             <div class="row">
               <div class="col-3 mb-3">
                 <label class="form-label">birthDate</label>
-                <input class="form-control" formControlName="birthDate" />
+                <input type="date" class="form-control" formControlName="birthDate" />
+
               </div>
 
               <div class="col-3 mb-3">
                 <label class="form-label">joiningDate</label>
-                <input class="form-control" formControlName="joiningDate" />
+                <input type="date" class="form-control" formControlName="joiningDate" />
               </div>
 
               <div class="col-3 mb-3">
@@ -85,7 +86,7 @@
 
               <div class="col-3 mb-3">
                 <label class="form-label">nationaalIdentificationNumber</label>
-                <input class="form-control" formControlName="nationaalIdentificationNumber" />
+                <input type="text" class="form-control" formControlName="nationaalIdentificationNumber" />
               </div>
 
             </div>
@@ -143,10 +144,7 @@
                 </div>
 
             <!-- employeeImageExtension (as readonly input or hidden input) -->
-                <div class="col-3 mb-3">
-                  <label class="form-label">Image Extension</label>
-                  <input class="form-control" formControlName="employeeImageExtension" readonly />
-                </div>
+                
 
 
 
@@ -248,37 +246,37 @@
         
             
             <div class="row">
-              <div class="col-3 mb-3">
-                <label class="form-label">createdby</label>
-                <input class="form-control" formControlName="createdby" />
-              </div>
+                <div class="col-3 mb-3">
+                  <label class="form-label">createdby</label>
+                  <input class="form-control" formControlName="createdby" />
+                </div>
 
-              <div class="col-3 mb-3">
-                <label class="form-label">setdate</label>
-                <input class="form-control" formControlName="setdate" />
-              </div>
+                <div class="col-3 mb-3">
+                  <label class="form-label">setdate</label>
+                  <input class="form-control" formControlName="setdate" />
+                </div>
 
-              <div class="col-3 mb-3">
-                    <label class="form-label">Upload Image</label>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      (change)="onImageSelected($event)"
-                      class="form-control"
-                    />
-                  </div>
+                <div class="col-3 mb-3">
+                      <label class="form-label">Upload Image</label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        (change)="onImageSelected($event)"
+                        class="form-control"
+                      />
+                </div>
 
-                  <div class="col-3 mb-3">
-                    <label class="form-label">Image Preview</label><br />
-                    <img
-                      *ngIf="employeeForm.get('employeeImageBase64')?.value"
-                      [src]="'data:image/' + employeeForm.get('employeeImageExtension')?.value + ';base64,' + employeeForm.get('employeeImageBase64')?.value"
-                      alt="Preview"
-                      width="120"
-                      height="120"
-                      style="object-fit: cover; border: 1px solid #ccc; border-radius: 4px;"
-                    />
-              </div>
+                <div class="col-3 mb-3">
+                  <label class="form-label">Image Preview</label><br />
+                  <img
+                    *ngIf="employeeForm.get('employeeImageBase64')?.value"
+                    [src]="'data:image/' + employeeForm.get('employeeImageExtension')?.value + ';base64,' + employeeForm.get('employeeImageBase64')?.value"
+                    alt="Preview"
+                    width="120"
+                    height="120"
+                    style="object-fit: cover; border: 1px solid #ccc; border-radius: 4px;"
+                  />
+                </div>
 
 
 
@@ -308,6 +306,13 @@
                     <thead class="table-light">
                       <tr>
                         <th>#</th>
+                        <th>Education Level</th>
+                        <th>Education Examination</th>
+                        <th>Education Result</th>
+                        <th>IsForeignInstitute</th>
+
+
+
                         <th>CGPA</th>
                         <th>Exam Scale</th>
                         <th>Marks</th>
@@ -322,35 +327,86 @@
                     <tbody>
                       <tr *ngFor="let edu of educationInfos.controls; let i = index" [formGroupName]="i">
                         <td>{{ i + 1 }}</td>
+
                         <td>
-                          <input type="text" class="form-control form-control-sm" formControlName="cgpa" />
+                          <select formControlName="idEducationLevel" class="form-control form-control-sm">
+                            <option value="">-- Select EducationLevel --</option>
+                            <option *ngFor="let educationlevel of educationlevels" [value]="educationlevel.id">{{ educationlevel.text }}</option>
+                          </select>
+                        </td>
+
+                        <td>
+                          <select formControlName="idEducationExamination" class="form-control form-control-sm">
+                            <option value="">-- Select Education Examination --</option>
+                            <option *ngFor="let educationexamination of educationexaminations" [value]="educationexamination.id">{{ educationexamination.text }}</option>
+                          </select>
+                        </td>
+
+                        <td>
+                          <select formControlName="idEducationResult" class="form-control form-control-sm">
+                            <option value="">-- Select Education Result --</option>
+                            <option *ngFor="let educationresult of educationresults" [value]="educationresult.id">{{ educationresult.text }}</option>
+                          </select>
                         </td>
                         <td>
-                          <input type="text" class="form-control form-control-sm" formControlName="examscale" />
+                          <div class="form-check form-check-inline">
+                            <input
+                              class="form-check-input"
+                              type="radio"
+                              [value]="true"
+                              formControlName="isForeignInstitute"
+                              [id]="'foreignYes' + i"
+                            />
+                            <label class="form-check-label" [for]="'foreignYes' + i">Yes</label>
+                          </div>
+                          <div class="form-check form-check-inline">
+                            <input
+                              class="form-check-input"
+                              type="radio"
+                              [value]="false"
+                              formControlName="isForeignInstitute"
+                              [id]="'foreignNo' + i"
+                            />
+                            <label class="form-check-label" [for]="'foreignNo' + i">No</label>
+                          </div>
+                        </td>
+
+                        <td>
+                          <input type="number" class="form-control form-control-sm" formControlName="cgpa" />
                         </td>
                         <td>
-                          <input type="text" class="form-control form-control-sm" formControlName="marks" />
+                          <input type="number" class="form-control form-control-sm" formControlName="examscale" />
+                        </td>
+                        <td>
+                          <input type="number" class="form-control form-control-sm" formControlName="marks" />
                         </td>
                         <td>
                           <input type="text" class="form-control form-control-sm" formControlName="major" />
                         </td>
                         <td>
-                          <input type="text" class="form-control form-control-sm" formControlName="passingYear" />
+                          <input type="number" class="form-control form-control-sm" formControlName="passingYear" />
                         </td>
                         <td>
                           <input type="text" class="form-control form-control-sm" formControlName="instituteName" />
                         </td>
                         <td>
-                          <input type="text" class="form-control form-control-sm" formControlName="duration" />
+                          <input type="number" class="form-control form-control-sm" formControlName="duration" />
                         </td>
                         <td>
                           <input type="text" class="form-control form-control-sm" formControlName="achievement" />
                         </td>
+                        <td>
+                          <button type="button" class="btn btn-sm btn-danger" (click)="removeEducation(i)">Remove</button>
+                        </td>
+
                         
                       </tr>
                     </tbody>
                   </table>
                 </div>
+
+                    <button type="button" class="btn btn-sm btn-primary mb-2" (click)="addEducation()">Add Education</button>
+
               </div>
             </div>
 
@@ -369,7 +425,7 @@
                         <th>filename</th>
                         <th>uploadDate</th>
                         <th>uploadedFileExtention</th>
-                        <th>uploadedFileBase64</th>
+                        
                         
 
                       </tr>
@@ -384,17 +440,21 @@
                           <input type="text" class="form-control form-control-sm" formControlName="filename" />
                         </td>
                         <td>
-                          <input type="text" class="form-control form-control-sm" formControlName="uploadDate" />
+                          <input type="date" class="form-control form-control-sm" formControlName="uploadDate" />
                         </td>
                         <td>
                           <input type="text" class="form-control form-control-sm" formControlName="uploadedFileExtention" />
                         </td>
-                              
-                        
+                        <td>
+                          <button type="button" class="btn btn-sm btn-danger" (click)="removeDocument(i)">Remove</button>
+                        </td>     
+                                        
                       </tr>
                     </tbody>
                   </table>
                 </div>
+                <button type="button" class="btn btn-sm btn-primary" (click)="addDocument()">Add Document</button>
+
               </div>
             </div>
 
@@ -430,15 +490,20 @@
                           <input type="text" class="form-control form-control-sm" formControlName="instituteLocation" />
                         </td>
                         <td>
-                          <input class="form-control" formControlName="fromDate" />
+                          <input type="date"  class="form-control" formControlName="fromDate" />
                         </td>
                         <td>
-                         <input class="form-control" formControlName="toDate" /> 
+                         <input type="date" class="form-control" formControlName="toDate" /> 
+                        </td>
+                        <td>
+                          <button type="button" class="btn btn-sm btn-danger" (click)="removeCertification(i)">Remove</button>
                         </td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
+                <button type="button" class="btn btn-sm btn-primary" (click)="addCertification()">Add Certification</button>
+
               </div>
            </div>
 
@@ -506,10 +571,17 @@
                         <td>
                           <input type="text" class="form-control form-control-sm" formControlName="permanentAddress" />
                         </td>
+
+                        <td>
+                          <button type="button" class="btn btn-sm btn-danger" (click)="removeFamilyInfo(i)">Remove</button>
+                        </td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
+
+                <button type="button" class="btn btn-sm btn-primary" (click)="addFamilyInfo()">Add Family Member</button>
+
               </div>
             </div>
 
@@ -519,7 +591,8 @@
 
 
            <!-- Submit -->
-            <button type="submit" class="btn btn-success mt-3">Save</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+
           </form>
      
      

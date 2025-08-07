@@ -61,5 +61,21 @@ getRelationships(clientId: number): Observable<BaseDropdownDto[]> {
   return this.http.get<BaseDropdownDto[]>(`http://localhost:5045/api/dropdowns/relationshipsdropdown?IdClient=${clientId}`);
 }
 
+
+
+getEducationLevels(clientId: number): Observable<BaseDropdownDto[]> {
+  return this.http.get<BaseDropdownDto[]>(`http://localhost:5045/api/dropdowns/educationleveldropdown?IdClient=${clientId}`);
+}
+
+
+getEducationExaminations(clientId: number): Observable<BaseDropdownDto[]> {
+  return this.http.get<BaseDropdownDto[]>(`http://localhost:5045/api/dropdowns/educationexaminationdropdown?IdClient=${clientId}`);
+}
+
+
+getEducationResult(clientId: number): Observable<BaseDropdownDto[]> {
+  return this.http.get<BaseDropdownDto[]>(`http://localhost:5045/api/dropdowns/educationresultdropdown?IdClient=${clientId}`);
+}
+
   // You can add more dropdown methods like getDesignations(), getRoles(), etc.
 }

@@ -5,6 +5,7 @@ import { EmployeeProfessionalCertificationDTO } from './employeeprofessionalcerd
 
 
 export interface EmployeeDetailsDTO {
+  idClient?: number;
   id?: number;
   employeeName: string;
   employeeNameBangla?: string;

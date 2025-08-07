@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { EmployeeDTO } from '../models/employee.dto';
 import { EmployeeDetailsDTO } from '../models/employeeDetails';
+import { CreateEmployeeDTO } from '../models/employeeCreateDto';
 
 
 @Injectable({
@@ -17,7 +18,7 @@ export class EmployeeService {
         constructor(private http: HttpClient) {}
 
       
-          getAllEmployees(): Observable<EmployeeDTO[]> {
+        getAllEmployees(): Observable<EmployeeDTO[]> {
          return this.http.get<EmployeeDTO[]>(`${this.baseUrl}?IdClient=${this.clientId}`);
         }
 
@@ -25,8 +26,10 @@ export class EmployeeService {
           return this.http.get<EmployeeDetailsDTO>(`${this.baseUrl}/detail?IdClient=${this.clientId}&id=${id}`);
         }
 
-          createEmployee(employee: EmployeeDetailsDTO) {
-          return this.http.post(this.baseUrl, employee); // Update URL as needed
+        createEmployee(formData: FormData) {
+          console.log(formData)
+          return this.http.post(this.baseUrl, formData);
+          
         }
 
     
