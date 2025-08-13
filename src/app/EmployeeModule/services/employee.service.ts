@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { EmployeeDTO } from '../models/employee.dto';
 import { EmployeeDetailsDTO } from '../models/employeeDetails';
 import { CreateEmployeeDTO } from '../models/employeeCreateDto';
+import { observableToBeFn } from 'rxjs/internal/testing/TestScheduler';
 
 
 @Injectable({
@@ -31,6 +32,20 @@ export class EmployeeService {
           return this.http.post(this.baseUrl, formData);
           
         }
+
+        updateEmployee(formData: FormData): Observable<any> {
+        return this.http.put(this.baseUrl, formData);  // No /employeeId here
+        }
+
+        deleteEmployee(id: number): Observable<any> {
+          return this.http.delete(`${this.baseUrl}/${this.clientId}/${id}`);
+        }
+
+        
+
+       
+
+
 
     
 

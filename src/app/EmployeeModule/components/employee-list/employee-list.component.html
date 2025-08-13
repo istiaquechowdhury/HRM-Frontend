@@ -2,8 +2,18 @@
 
   <div class="d-flex justify-content-end mt-3 mb-2">
 
-    <button class="btn btn-primary mb-3" (click)="onAddNew()">Add New</button>
+    <button class="btn btn-outline-primary mb-3 me-2"  (click)="onAddNew()">Add</button>
+    <button class="btn btn-outline-warning mb-3 me-2"  [disabled]="!selectedEmployeeId" (click)="onEdit(selectedEmployeeId)" >Update</button>
+    <button 
+      (click)="onDeleteEmployee(selectedEmployeeId!)" 
+      class="btn btn-outline-danger mb-3"
+      [disabled]="!selectedEmployeeId">
+      Delete
+    </button>
 
+
+
+     
   </div>
 
   <div class="row">
@@ -42,7 +52,7 @@
     
     <div class="col-10">
     
-          <form *ngIf="employeeForm" [formGroup]="employeeForm" (ngSubmit)="onSubmit()"  enctype="multipart/form-data">
+          <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()"  enctype="multipart/form-data">
 
             <div class="row">
                <div class="col-3 mb-3">
@@ -86,7 +96,7 @@
 
               <div class="col-3 mb-3">
                 <label class="form-label">nationaalIdentificationNumber</label>
-                <input type="text" class="form-control" formControlName="nationaalIdentificationNumber" />
+                <input type="text" class="form-control" formControlName="nationalIdentificationNumber" />
               </div>
 
             </div>
@@ -144,7 +154,13 @@
                 </div>
 
             <!-- employeeImageExtension (as readonly input or hidden input) -->
-                
+                  <div class="col-3 mb-3">
+                    <label for="idDesignation">Designation</label>
+                    <select formControlName="idDesignation" class="form-control">
+                      <option value="">-- Select Designation --</option>
+                      <option *ngFor="let designation of designations" [value]="designation.id">{{ designation.text }}</option>
+                    </select>
+                 </div>
 
 
 
@@ -155,6 +171,12 @@
                     <option value="">-- Select Department --</option>
                     <option *ngFor="let dept of departments" [value]="dept.id">{{ dept.text }}</option>
                   </select>
+
+                  <div class="invalid-feedback d-block" *ngIf="employeeForm.get('idDepartment')?.invalid">
+                    Department is required.
+                  </div>
+                                      
+                  
                 </div>
 
                 <div class="col-3 mb-3">
@@ -163,6 +185,10 @@
                         <option value="">-- Select Section --</option>
                         <option *ngFor="let sec of sections" [value]="sec.id">{{ sec.text }}</option>
                       </select>
+
+                    <div class="invalid-feedback d-block" *ngIf="employeeForm.get('idSection')?.invalid">
+                      Section is required.
+                    </div>  
                 </div>
             </div>
 
@@ -170,13 +196,7 @@
 
 
             <div class="row">
-              <div class="col-3 mb-3">
-                <label for="idDesignation">Designation</label>
-                <select formControlName="idDesignation" class="form-control">
-                  <option value="">-- Select Designation --</option>
-                  <option *ngFor="let designation of designations" [value]="designation.id">{{ designation.text }}</option>
-                </select>
-              </div>
+             
 
               <div class="col-3 mb-3">
                 <label for="idEmployeeType">Employee Type</label>
@@ -202,12 +222,6 @@
                 </select>
               </div>
 
-
-            </div>
-
-
-            <div class="row">
-                      
               <div class="col-3 mb-3">
                 <label for="idReligion">Religion</label>
                 <select formControlName="idReligion" class="form-control">
@@ -216,77 +230,98 @@
                 </select>
               </div>
 
-              <div class="col-3 mb-3">
-                <label for="idMaritalStatus">Marital Status</label>
-                <select formControlName="idMaritalStatus" class="form-control">
-                  <option value="">-- Select Marital Status --</option>
-                  <option *ngFor="let MaritalStatus of maritalstatuses" [value]="MaritalStatus.id">{{ MaritalStatus.text }}</option>
-                </select>
-              </div>
 
-              <div class="col-3 mb-3">
-                <label for="idWeekOff">Week Off</label>
-                <select formControlName="idWeekOff" class="form-control">
-                  <option value="">-- Select Week Off --</option>
-                  <option *ngFor="let WeekOff of weekoffs" [value]="WeekOff.id">{{ WeekOff.text }}</option>
-                </select>
-              </div>
-
-              <div class="col-3 mb-3">
-                <label for="idReportingManager">Reporting Manager</label>
-                <select formControlName="idReportingManager" class="form-control">
-                  <option value="">-- Select Reporting Manager --</option>
-                  <option *ngFor="let ReportingManager of reportingmanagers" [value]="ReportingManager.id">{{ ReportingManager.text }}</option>
-                </select>
-              </div>
-                 
             </div>
+
+
+            
+
+
+                <div class="row">
+                    <div class="col-3 mb-3">
+                      <label for="idMaritalStatus" class="form-label">Marital Status</label>
+                      <select formControlName="idMaritalStatus" class="form-control">
+                        <option value="">-- Select Marital Status --</option>
+                        <option *ngFor="let MaritalStatus of maritalstatuses" [value]="MaritalStatus.id">
+                          {{ MaritalStatus.text }}
+                        </option>
+                      </select>
+                    </div>
+
+                    <div class="col-3 mb-3">
+                      <label for="idWeekOff" class="form-label">Week Off</label>
+                      <select formControlName="idWeekOff" class="form-control">
+                        <option value="">-- Select Week Off --</option>
+                        <option *ngFor="let WeekOff of weekoffs" [value]="WeekOff.id">
+                          {{ WeekOff.text }}
+                        </option>
+                      </select>
+                    </div>
+
+                    <div class="col-3 mb-3">
+                      <label for="idReportingManager" class="form-label">Reporting Manager</label>
+                      <select formControlName="idReportingManager" class="form-control">
+                        <option value="">-- Select Reporting Manager --</option>
+                        <option *ngFor="let ReportingManager of reportingmanagers" [value]="ReportingManager.id">
+                          {{ ReportingManager.text }}
+                        </option>
+                      </select>
+                    </div>
+
+                    <div class="col-3 mb-3">
+                      <label for="uploadImage" class="form-label">Upload Image</label>
+                      <input
+                        id="uploadImage"
+                        type="file"
+                        accept="image/*"
+                        (change)="onEmployeeImageSelected($event)"
+                        class="form-control"
+                        [disabled]="isReadonly"
+                      />
+                    </div>
+                </div>
+
+
+
+                <!-- <div class="row">
+                        
+                   <div class="col-12 mb-3 text-end">
+                    <label class="form-label">Image Preview</label><br />
+                    <img
+                      *ngIf="employeeForm.get('employeeImageBase64')?.value"
+                      [src]="'data:image/' + employeeForm.get('employeeImageExtension')?.value + ';base64,' + employeeForm.get('employeeImageBase64')?.value"
+                      alt="Preview"
+                      width="120"
+                      height="120"
+                      style="object-fit: cover; border: 1px solid #ccc; border-radius: 4px;"
+                    />
+                  </div>
+                  
+                        
+
+                </div> -->
+
+
+                <div class="row justify-content-center">
+  <div class="col-12 mb-3 text-end">
+    <label class="form-label fw-bold">Image Preview</label><br />
+    <img
+      *ngIf="employeeForm.get('employeeImageBase64')?.value"
+      [src]="'data:image/' + employeeForm.get('employeeImageExtension')?.value + ';base64,' + employeeForm.get('employeeImageBase64')?.value"
+      alt="Preview"
+      class="img-thumbnail"
+      style="width: 180px; height: 180px; object-fit: cover;"
+    />
+  </div>
+</div>
+
+
+
+            
             
 
         
-            
-            <div class="row">
-                <div class="col-3 mb-3">
-                  <label class="form-label">createdby</label>
-                  <input class="form-control" formControlName="createdby" />
-                </div>
-
-                <div class="col-3 mb-3">
-                  <label class="form-label">setdate</label>
-                  <input class="form-control" formControlName="setdate" />
-                </div>
-
-                <div class="col-3 mb-3">
-                      <label class="form-label">Upload Image</label>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        (change)="onImageSelected($event)"
-                        class="form-control"
-                      />
-                </div>
-
-                <div class="col-3 mb-3">
-                  <label class="form-label">Image Preview</label><br />
-                  <img
-                    *ngIf="employeeForm.get('employeeImageBase64')?.value"
-                    [src]="'data:image/' + employeeForm.get('employeeImageExtension')?.value + ';base64,' + employeeForm.get('employeeImageBase64')?.value"
-                    alt="Preview"
-                    width="120"
-                    height="120"
-                    style="object-fit: cover; border: 1px solid #ccc; border-radius: 4px;"
-                  />
-                </div>
-
-
-
-
-              
-
-
-
-            </div>
-
+           
          
 
             
@@ -333,6 +368,10 @@
                             <option value="">-- Select EducationLevel --</option>
                             <option *ngFor="let educationlevel of educationlevels" [value]="educationlevel.id">{{ educationlevel.text }}</option>
                           </select>
+                          
+                           <div class="invalid-feedback d-block" *ngIf="edu.get('idEducationLevel')?.invalid">
+                                EducationLevel is required.
+                           </div>
                         </td>
 
                         <td>
@@ -340,6 +379,9 @@
                             <option value="">-- Select Education Examination --</option>
                             <option *ngFor="let educationexamination of educationexaminations" [value]="educationexamination.id">{{ educationexamination.text }}</option>
                           </select>
+                           <div class="invalid-feedback d-block" *ngIf="edu.get('idEducationExamination')?.invalid">
+                                EducationExamination is required.
+                           </div>
                         </td>
 
                         <td>
@@ -347,6 +389,9 @@
                             <option value="">-- Select Education Result --</option>
                             <option *ngFor="let educationresult of educationresults" [value]="educationresult.id">{{ educationresult.text }}</option>
                           </select>
+                           <div class="invalid-feedback d-block" *ngIf="edu.get('idEducationResult')?.invalid">
+                                EducationResult is required.
+                           </div>
                         </td>
                         <td>
                           <div class="form-check form-check-inline">
@@ -369,6 +414,10 @@
                             />
                             <label class="form-check-label" [for]="'foreignNo' + i">No</label>
                           </div>
+                          <div class="invalid-feedback d-block"
+                              *ngIf="edu.get('isForeignInstitute')?.invalid">
+                               Please select Yes or No.
+                          </div>
                         </td>
 
                         <td>
@@ -382,12 +431,21 @@
                         </td>
                         <td>
                           <input type="text" class="form-control form-control-sm" formControlName="major" />
+                          <div class="invalid-feedback d-block" *ngIf="edu.get('major')?.invalid">
+                            Major is required.
+                          </div>
                         </td>
                         <td>
                           <input type="number" class="form-control form-control-sm" formControlName="passingYear" />
+                          <div class="invalid-feedback d-block" *ngIf="edu.get('major')?.invalid">
+                            Passing Year is required.
+                          </div>
                         </td>
                         <td>
                           <input type="text" class="form-control form-control-sm" formControlName="instituteName" />
+                          <div class="invalid-feedback d-block" *ngIf="edu.get('major')?.invalid">
+                            Institutename is required.
+                          </div>
                         </td>
                         <td>
                           <input type="number" class="form-control form-control-sm" formControlName="duration" />
@@ -396,7 +454,7 @@
                           <input type="text" class="form-control form-control-sm" formControlName="achievement" />
                         </td>
                         <td>
-                          <button type="button" class="btn btn-sm btn-danger" (click)="removeEducation(i)">Remove</button>
+                          <button type="button" class="btn btn-sm btn-danger" (click)="removeEducation(i)" [disabled]="isReadonly" >Remove</button>
                         </td>
 
                         
@@ -405,7 +463,7 @@
                   </table>
                 </div>
 
-                    <button type="button" class="btn btn-sm btn-primary mb-2" (click)="addEducation()">Add Education</button>
+                    <button type="button" class="btn btn-sm btn-primary mb-2" (click)="addEducation()" [disabled]="isReadonly">Add Education</button>
 
               </div>
             </div>
@@ -431,29 +489,80 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr *ngFor="let doc of documents.controls; let i = index" [formGroupName]="i">
+                      <!-- <tr *ngFor="let doc of documents.controls; let i = index" [formGroupName]="i">
                         <td>{{ i + 1 }}</td>
                         <td>
                           <input type="text" class="form-control form-control-sm" formControlName="documentName" />
+                           <div class="invalid-feedback d-block" *ngIf="doc.get('documentName')?.invalid">
+                            documentName is required.
+                          </div>
                         </td>
                         <td>
                           <input type="text" class="form-control form-control-sm" formControlName="filename" />
+                           <div class="invalid-feedback d-block" *ngIf="doc.get('filename')?.invalid">
+                            filename is required.
+                          </div>
                         </td>
                         <td>
                           <input type="date" class="form-control form-control-sm" formControlName="uploadDate" />
+                           <div class="invalid-feedback d-block" *ngIf="doc.get('uploadDate')?.invalid">
+                            uploadDate is required.
+                          </div>
                         </td>
                         <td>
                           <input type="text" class="form-control form-control-sm" formControlName="uploadedFileExtention" />
                         </td>
                         <td>
-                          <button type="button" class="btn btn-sm btn-danger" (click)="removeDocument(i)">Remove</button>
+                          <button type="button" class="btn btn-sm btn-danger" (click)="removeDocument(i)" [disabled]="isReadonly">Remove</button>
                         </td>     
                                         
-                      </tr>
+
+                                         
+
+                                         
+                      </tr> -->
+                                          <tr *ngFor="let doc of documents.controls; let i = index" [formGroupName]="i">
+                      <td>{{ i + 1 }}</td>
+                      <td>
+                        <input type="text" class="form-control form-control-sm" formControlName="documentName" />
+                        <div class="invalid-feedback d-block" *ngIf="doc.get('documentName')?.invalid">
+                          documentName is required.
+                        </div>
+                      </td>
+                      <td>
+                        <input type="text" class="form-control form-control-sm" formControlName="filename" readonly />
+                        <div class="invalid-feedback d-block" *ngIf="doc.get('filename')?.invalid">
+                          filename is required.
+                        </div>
+                      </td>
+                      <td>
+                        <input type="date" class="form-control form-control-sm" formControlName="uploadDate" />
+                        <div class="invalid-feedback d-block" *ngIf="doc.get('uploadDate')?.invalid">
+                          uploadDate is required.
+                        </div>
+                      </td>
+                      <td>
+                        <input type="text" class="form-control form-control-sm" formControlName="uploadedFileExtention" readonly />
+                      </td>
+                      <td>
+                        <input 
+                          type="file" 
+                          accept="image/*" 
+                          (change)="onImageSelected($event, i)" 
+                          [disabled]="isReadonly"
+                        />
+                      </td>
+                      <td>
+                        <button type="button" class="btn btn-sm btn-danger" (click)="removeDocument(i)" [disabled]="isReadonly">Remove</button>
+                      </td>     
+                    </tr>
+
+
+
                     </tbody>
                   </table>
                 </div>
-                <button type="button" class="btn btn-sm btn-primary" (click)="addDocument()">Add Document</button>
+                <button type="button" class="btn btn-sm btn-primary" (click)="addDocument()" [disabled]="isReadonly">Add Document</button>
 
               </div>
             </div>
@@ -482,27 +591,39 @@
                         <td>{{ i + 1 }}</td>
                         <td>
                           <input type="text" class="form-control form-control-sm" formControlName="certificationTitle" />
+                           <div class="invalid-feedback d-block" *ngIf="cert.get('certificationTitle')?.invalid">
+                            certification title is required.
+                          </div>
                         </td>
                         <td>
                           <input type="text" class="form-control form-control-sm" formControlName="certificationInstitute" />
+                           <div class="invalid-feedback d-block" *ngIf="cert.get('certificationInstitute')?.invalid">
+                            certification institute is required.
+                          </div>
                         </td>
                         <td>
                           <input type="text" class="form-control form-control-sm" formControlName="instituteLocation" />
+                           <div class="invalid-feedback d-block" *ngIf="cert.get('instituteLocation')?.invalid">
+                            institute Location is required.
+                          </div>
                         </td>
                         <td>
                           <input type="date"  class="form-control" formControlName="fromDate" />
+                           <div class="invalid-feedback d-block" *ngIf="cert.get('fromDate')?.invalid">
+                            from date is required.
+                          </div>
                         </td>
                         <td>
                          <input type="date" class="form-control" formControlName="toDate" /> 
                         </td>
                         <td>
-                          <button type="button" class="btn btn-sm btn-danger" (click)="removeCertification(i)">Remove</button>
+                          <button type="button" class="btn btn-sm btn-danger" (click)="removeCertification(i)" [disabled]="isReadonly">Remove</button>
                         </td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
-                <button type="button" class="btn btn-sm btn-primary" (click)="addCertification()">Add Certification</button>
+                <button type="button" class="btn btn-sm btn-primary" (click)="addCertification()" [disabled]="isReadonly">Add Certification</button>
 
               </div>
            </div>
@@ -540,6 +661,9 @@
 
                         <td>
                           <input type="text" class="form-control form-control-sm" formControlName="name" />
+                          <div class="invalid-feedback d-block" *ngIf="family.get('name')?.invalid">
+                            Name is required.
+                          </div>
                         </td>
 
                         <td>
@@ -547,6 +671,9 @@
                             <option value="">-- Select Gender --</option>
                             <option *ngFor="let gender of genders" [value]="gender.id">{{ gender.text }}</option>
                           </select>
+                          <div class="invalid-feedback d-block" *ngIf="family.get('idGender')?.invalid">
+                            Gender is required.
+                          </div>
                         </td>
 
                         <td>
@@ -554,6 +681,9 @@
                             <option value="">-- Select Relationship --</option>
                             <option *ngFor="let relation of relationships" [value]="relation.id">{{ relation.text }}</option>
                           </select>
+                          <div class="invalid-feedback d-block" *ngIf="family.get('idRelationship')?.invalid">
+                            relationships is required.
+                          </div>
                         </td>
 
                         <td>
@@ -573,14 +703,14 @@
                         </td>
 
                         <td>
-                          <button type="button" class="btn btn-sm btn-danger" (click)="removeFamilyInfo(i)">Remove</button>
+                          <button type="button" class="btn btn-sm btn-danger" (click)="removeFamilyInfo(i)" [disabled]="isReadonly">Remove</button>
                         </td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
 
-                <button type="button" class="btn btn-sm btn-primary" (click)="addFamilyInfo()">Add Family Member</button>
+                <button type="button" class="btn btn-sm btn-primary" (click)="addFamilyInfo()" [disabled]="isReadonly">Add Family Member</button>
 
               </div>
             </div>
@@ -591,7 +721,7 @@
 
 
            <!-- Submit -->
-          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="submit" class="btn btn-primary mt-2" [disabled]="isReadonly">Save</button>
 
           </form>
      

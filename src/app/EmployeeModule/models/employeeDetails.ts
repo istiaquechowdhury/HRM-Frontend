@@ -5,7 +5,7 @@ import { EmployeeProfessionalCertificationDTO } from './employeeprofessionalcerd
 
 
 export interface EmployeeDetailsDTO {
-  idClient?: number;
+  idClient: number;
   id?: number;
   employeeName: string;
   employeeNameBangla?: string;
@@ -21,9 +21,9 @@ export interface EmployeeDetailsDTO {
   hasAttendenceBonus?: boolean;
   isActive?: boolean;
   employeeImageExtension?: string | null;
-  idDepartment?: number | null;
+  idDepartment: number;
   departmentName?: string | null;
-  idSection?: number | null;
+  idSection: number;
   sectionName?: string | null;
   idDesignation?: number | null;
   designationName?: string | null;

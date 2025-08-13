@@ -10,7 +10,6 @@ import { BaseDropdownDto } from '../../models/dropdowndto';
 import { EmployeeDocumentDTO } from '../../models/employeedocumentdto';
 import { EmployeeFamilyInfoDTO } from '../../models/employeefamililyinfodto';
 import { EmployeeProfessionalCertificationDTO } from '../../models/employeeprofessionalcerdto';
-import { CreateEmployeeDTO } from '../../models/employeeCreateDto';
 
 @Component({
   selector: 'app-employee-list',
@@ -50,6 +49,8 @@ export class EmployeeListComponent implements OnInit {
   educationexaminations: BaseDropdownDto[] = []; 
   educationresults: BaseDropdownDto[] = [];
 
+  isReadonly = false;
+
 
   
    
@@ -66,10 +67,11 @@ export class EmployeeListComponent implements OnInit {
   ngOnInit(): void {
     this.loadEmployees();
     this.idClient = 10001001;
+    this.buildForm();
     
 
     
-      this.buildForm(); // ✅ REQUIRED
+      // this.buildForm();
 
 
     this.filterForm = this.fb.group({
@@ -189,37 +191,88 @@ export class EmployeeListComponent implements OnInit {
     this.buildCertificationForm();
     this.buildDocumentForm();
     this.buildFamilyForm();
+    this.isReadonly = false;
       
     
   }
 
+
   viewEmployeeDetails(id: number) {
     this.employeeService.getEmployeeById(id).subscribe(data => {
       this.selectedEmployeeId = id;
+
       this.buildForm(data);
+
+      // Patch the image base64 and extension to the form after buildForm
+      this.employeeForm.patchValue({
+        employeeImageBase64: data.employeeImageBase64 || '',
+        employeeImageExtension: data.employeeImageExtension
+          ? data.employeeImageExtension.replace('image/', '') // remove mime type if present
+          : 'jpeg' // fallback if none present
+      });
+
+      this.employeeForm.disable();
+      this.isReadonly = true;
     });
   }
+
+onEdit(id: number) {
+  this.selectedEmployeeId = id;
+
+  this.employeeService.getEmployeeById(id).subscribe(data => {
+    this.buildForm(data);
+
+
+   
+    // Make sure both id and IdClient are in the form
+    this.employeeForm.patchValue({
+      
+      employeeImageBase64: data.employeeImageBase64 || '',
+      employeeImageExtension: data.employeeImageExtension
+        ? data.employeeImageExtension.replace('image/', '')
+        : 'jpeg'
+    });
+
+    this.employeeForm.enable();
+    this.isReadonly = false;
+  });
+}
+
+
+
+  //   onEdit(id: number) {
+  //   if (!this.selectedEmployeeId) return;
+
+  //   // Enable the form for editing
+  //   this.employeeForm.enable();
+
+  //   // Mark readonly flag as false (editing mode)
+  //   this.isReadonly = false;
+  // }
 
 
 
   buildForm(employee?: EmployeeDetailsDTO) {
+
+     console.log('on edit', employee );
     this.employeeForm = this.fb.group({
-      IdClient: [this.idClient],
+      id: [employee?.id || null],
+      IdClient: [employee?.idClient || this.idClient],
       employeeName: [employee?.employeeName || '',],
       employeeNameBangla: [employee?.employeeNameBangla || '',],
       fatherName: [employee?.fatherName || '',],
       motherName : [employee?.motherName || '',],
-      birthDate: [employee?.birthDate || '',],
-      joiningDate:[employee?.joiningDate || '',],
+      birthDate: employee?.birthDate ? this.formatDateForInput(employee?.birthDate) : '',
+      joiningDate: employee?.joiningDate ? this.formatDateForInput(employee?.joiningDate) : '',
       contactNo: [employee?.contactNo || '',],
-      nationaalIdentificationNumber: [employee?.nationalIdentificationNumber|| '',],
+      nationalIdentificationNumber: [employee?.nationalIdentificationNumber|| '',],
       address:[employee?.address|| '',],
       PresentAddress:[employee?.presentAddress || '',],
       hasOvertime : [employee?.hasOvertime || '',],
       hasAttendenceBonus :[employee?.hasAttendenceBonus || '',],
       isActive :[employee?.isActive || '',],
-      idDepartment :[employee?.idDepartment || '',],
-      idSection :[employee?.idSection || '',],
+      idDepartment :[employee?.idDepartment || '', [Validators.required],],
+      idSection :[employee?.idSection || '',[Validators.required] ],
       idDesignation :[employee?.idDesignation || '',],
       idEmployeeType :[employee?.idEmployeeType || '',],
       idJobType :[employee?.idJobType || '',],
@@ -231,7 +284,7 @@ export class EmployeeListComponent implements OnInit {
       createdby: [employee?.createdBy || '',],
       setdate : [employee?.setDate || '', ],
       employeeImage: [null], // <-- file object
-      employeeImageBase64: [employee?.employeeImageBase64 || '', [Validators.required]],
+      employeeImageBase64: [employee?.employeeImageBase64 || '',],
       employeeImageExtension: [employee?.employeeImageExtension || ''],
 
       
@@ -262,17 +315,18 @@ export class EmployeeListComponent implements OnInit {
   buildEducationForm(e: Partial<EmployeeEducationInfosDTO> = {}): FormGroup {
 
     return this.fb.group({
+      id: [e.id || null], 
       IdClient : [this.idClient],
-      idEducationLevel: [e.idEducationLevel],
-      idEducationExamination: [e.idEducationExamination],
-      idEducationResult: [e.idEducationExamination],
+      idEducationLevel: [e.idEducationLevel,Validators.required],
+      idEducationExamination: [e.idEducationExamination,Validators.required],
+      idEducationResult: [e.idEducationResult,Validators.required],
       cgpa: [e.cgpa || '',],
       examscale: [e.examScale || ''],
-      marks: [e.marks || ''],
-      major: [e.major || ''],
-      passingYear: [e.passingYear],
-      instituteName: [e.instituteName],
-      isForeignInstitute: [e.isForeignInstitute],
+      marks: [e.marks || '',],
+      major: [e.major || '',Validators.required],
+      passingYear: [e.passingYear,Validators.required],
+      instituteName: [e.instituteName,Validators.required],
+      isForeignInstitute: [e.isForeignInstitute,Validators.required],
       duration: [e.duration],
       achievement : [e.achievement]
 
@@ -283,10 +337,13 @@ export class EmployeeListComponent implements OnInit {
 
   buildDocumentForm(d:Partial<EmployeeDocumentDTO> = {}): FormGroup {
     return this.fb.group({
-      IdClient : [this.idClient],
-      documentName: [d.documentName || '',],
-      filename: [d.fileName || ''],
-      uploadDate: [d.uploadDate || ''],
+      id: [d.id ?? null],
+      IdClient: [d.idClient || this.idClient],
+      documentName: [d.documentName || '',Validators.required,],
+      filename: [d.fileName || '',Validators.required],
+      uploadDate: [
+      d.uploadDate ? this.formatDateForInput(d.uploadDate) : '',Validators.required],
+
       uploadedFileExtention: [d.uploadedFileExtention || ''],
       uploadedFileBase64: [d.uploadedFileBase64 || ''],
 
@@ -298,11 +355,12 @@ export class EmployeeListComponent implements OnInit {
 
   buildFamilyForm(f: Partial<EmployeeFamilyInfoDTO> = {}): FormGroup {
     return this.fb.group({
+      id: [f.id || null],
       IdClient : [this.idClient],
       name: [f.name || '',],
       idGender: [f.idGender || ''],
       idRelationship: [f.idRelationship || ''],
-      dateOfBirth: [f?.dateOfBirth || ''],
+      dateOfBirth: f.dateOfBirth ? this.formatDateForInput(f.dateOfBirth) : '',
       contactNo: [f?.contactNo || ''],
       currentAddress: [f?.currentAddress || ''],
       permanentAddress: [f?.permanentAddress || ''],
@@ -314,14 +372,13 @@ export class EmployeeListComponent implements OnInit {
 
   buildCertificationForm(c: Partial<EmployeeProfessionalCertificationDTO> = {}): FormGroup {
     return this.fb.group({
+      id: [c.id || null],
       IdClient : [this.idClient],
-      certificationTitle: [c.certificationTitle || '',],
-      certificationInstitute: [c.certificationInstitute || ''],
-      instituteLocation: [c.instituteLocation || ''],
-      fromDate: [c.fromDate || ''],
-      toDate: [c.toDate || ''],
-
-        
+      certificationTitle: [c.certificationTitle || '',Validators.required],
+      certificationInstitute: [c.certificationInstitute || '',Validators.required],
+      instituteLocation: [c.instituteLocation || '',Validators.required],
+      fromDate: [c.fromDate ? this.formatDateForInput(c.fromDate) : '',Validators.required],
+      toDate: c.toDate ? this.formatDateForInput(c.toDate) : '',
 
 
 
@@ -337,17 +394,18 @@ export class EmployeeListComponent implements OnInit {
 
     addEducation(): void {
     const eduForm = this.fb.group({
+      id: [null],
       IdClient: [this.idClient],                         // number
-      idEducationLevel: [null],                          // number
-      idEducationExamination: [null],                    // number
-      idEducationResult: [null],                         // number
+      idEducationLevel: [null,Validators.required],                          // number
+      idEducationExamination: [null,Validators.required],                    // number
+      idEducationResult: [null,Validators.required],                         // number
       cgpa: [null],                                      // decimal
       examscale: [null],                                 // decimal
       marks: [null],                                     // decimal
-      major: [''],                                       // string
-      passingYear: [null],                               // decimal (or number if year)
-      instituteName: [''],                               // string
-      isForeignInstitute: [false],                       // boolean
+      major: ['',Validators.required],                                       // string
+      passingYear: [null,Validators.required],                               // decimal (or number if year)
+      instituteName: ['',Validators.required],                               // string
+      isForeignInstitute: [null,Validators.required],                       // boolean
       duration: [null],                                  // decimal
       achievement: ['']                                  // string
     });
@@ -367,10 +425,11 @@ export class EmployeeListComponent implements OnInit {
 
         addDocument(): void {
           const docForm = this.fb.group({
-            IdClient: [this.idClient],                   // number
-            documentName: [''],                           // string
-            filename: [''],                               // string
-            uploadDate: [null],                           // Date or string (ISO)
+            id: [null],
+            IdClient: [this.idClient],                  // number
+            documentName: ['',Validators.required],                           // string
+            filename: ['',Validators.required],                               // string
+            uploadDate: ['',Validators.required],
             uploadedFileExtention: [''],                  // string
             uploadedFileBase64: ['']                       // string (base64 encoded file content)
           });
@@ -390,10 +449,11 @@ export class EmployeeListComponent implements OnInit {
 
       addFamilyInfo(): void {
       const familyForm = this.fb.group({
+        id: [null],
         IdClient: [this.idClient],            // number
-        name: [''],                           // string
-        idGender: [null],                     // number
-        idRelationship: [null],               // number
+        name: ['',Validators.required],                           // string
+        idGender: [null,Validators.required],                     // number
+        idRelationship: [null,Validators.required],               // number
         dateOfBirth: [null],                  // Date or ISO string
         contactNo: [''],                      // string
         currentAddress: [''],                 // string
@@ -414,11 +474,12 @@ export class EmployeeListComponent implements OnInit {
 
     addCertification(): void {
       const certForm = this.fb.group({
+        id: [null],
         IdClient: [this.idClient],           // number
-        certificationTitle: [''],             // string
-        certificationInstitute: [''],         // string
-        instituteLocation: [''],              // string
-        fromDate: [null],                     // Date or ISO string
+        certificationTitle: ['',Validators.required],             // string
+        certificationInstitute: ['',Validators.required],         // string
+        instituteLocation: ['',Validators.required],              // string
+        fromDate: [null,Validators.required],                     // Date or ISO string
         toDate: [null]                       // Date or ISO string
       });
 
@@ -430,98 +491,16 @@ export class EmployeeListComponent implements OnInit {
     }
 
 
-      // onSubmit() {
-      //   const formData = new FormData();
-
-        
-      //    //Append scalar fields (exclude FormArrays)
-      //   Object.keys(this.employeeForm.controls).forEach(key => {
-      //     const control = this.employeeForm.get(key);
-      //     if (control && !(control instanceof FormArray)) {
-      //       formData.append(key, control.value);
-      //     }
-      //   });
-
-      //   //Append image file (if using IFormFile in backend)
-      //   if (this.selectedImageFile) {
-      //     formData.append('employeeImage', this.selectedImageFile);
-      //   }
-
-      //     //const employeeData = this.employeeForm.getRawValue();
-
-      //   // Remove employeeImage from employeeData because it should be sent as file, not string
-      //   // delete employeeData.employeeImage;
-
-      //   // Append JSON string of the whole employee data
-      //   // formData.append('employeeData', JSON.stringify(employeeData));
-
-      //   // Append image file
-      //   // if (this.selectedImageFile) {
-      //   //   formData.append('employeeImage', this.selectedImageFile);
-      //   // }
-
-      //   // this.employeeService.createEmployee(formData).subscribe({
-      //   //   next: res => console.log("✅ Employee created", res),
-      //   //   error: err => console.error("❌ Error saving employee:", err)
-      //   // });
-
-      
-        
-
-        
-      //         this.employeeService.createEmployee(formData).subscribe({
-      //         next: (res) => {
-      //           console.log("✅ Employee created", res);
-      //         },
-      //         error: (err) => {
-      //           console.error("❌ Error saving employee:", err);
-      //         }
-      //         });
-      // }
-
-    // onSubmit() {
-    //   const formData = new FormData();
-
-    //   //Append scalar fields (exclude FormArrays)
-    //   Object.keys(this.employeeForm.controls).forEach(key => {
-    //     const control = this.employeeForm.get(key);
-    //     if (control && !(control instanceof FormArray)) {
-    //       formData.append(key, control.value);
-    //     }
-    //   });
-
-    //   // Append FormArray data as JSON string
-    //   const formArrays = ['employeeDocument', 'employeeEducationInfos', 'employeeProfessionalCertification', 'employeeFamilyInfo']; // replace with your actual FormArray names
-    //   formArrays.forEach(arrayName => {
-    //     const arrayControl = this.employeeForm.get(arrayName) as FormArray;
-    //     if (arrayControl && arrayControl.length > 0) {
-    //       const arrayData = arrayControl.value;
-    //       formData.append(arrayName, JSON.stringify(arrayData));
-    //     }
-    //   });
-
-    //   // Append image file (if any)
-    //   if (this.selectedImageFile) {
-    //     formData.append('employeeImage', this.selectedImageFile);
-    //   }
-
-    //   // Submit the formData to backend
-    //   this.employeeService.createEmployee(formData).subscribe({
-    //     next: (res) => {
-    //       console.log("✅ Employee created", res);
-    //     },
-    //     error: (err) => {
-    //       console.error("❌ Error saving employee:", err);
-    //     }
-    //   });
-
+  onSubmit() {
+ 
     
-
-
-    // }
-
-    onSubmit() {
   const formData = new FormData();
+
+   this.employeeForm.markAllAsTouched(); // Mark all fields as touched to trigger validation UI
+
+  if (this.employeeForm.invalid) {
+    return; // Stop submission if form is invalid
+  }
 
   // Append scalar fields (exclude FormArrays)
   Object.keys(this.employeeForm.controls).forEach(key => {
@@ -535,11 +514,14 @@ export class EmployeeListComponent implements OnInit {
     }
   });
 
+
   // Append employeeEducationInfos FormArray as JSON string, convert strings to numbers where needed
   const educationArray = this.employeeForm.get('employeeEducationInfos') as FormArray;
   if (educationArray && educationArray.length > 0) {
     const educations = educationArray.value.map((edu: any) => ({
       ...edu,
+      id: edu.id ?? null,                    // existing record id
+      IdClient: +edu.IdClient,  
       idEducationLevel: +edu.idEducationLevel,
       idEducationExamination: +edu.idEducationExamination,
       idEducationResult: +edu.idEducationResult,
@@ -558,6 +540,9 @@ export class EmployeeListComponent implements OnInit {
 
   if (documentArray && documentArray.length > 0) {
     const documents = documentArray.value.map((doc: any) => ({
+      ...doc,
+       id: doc.id ?? null,                    // existing record id
+      IdClient: +doc.IdClient,   
       documentName: doc.documentName || '',
       filename: doc.filename || '',
       uploadDate: doc.uploadDate ? new Date(doc.uploadDate).toISOString() : null,
@@ -573,6 +558,8 @@ export class EmployeeListComponent implements OnInit {
   if (certArray && certArray.length > 0) {
     const certifications = certArray.value.map((cert: any) => ({
       ...cert,
+       id: cert.id ?? null,                    // existing record id
+      IdClient: +cert.IdClient,
       certificationTitle: cert.certificationTitle?.trim() || '',
       certificationInstitute: cert.certificationInstitute?.trim() || '',
       instituteLocation: cert.instituteLocation?.trim() || '',
@@ -589,6 +576,8 @@ export class EmployeeListComponent implements OnInit {
   if (familyArray && familyArray.length > 0) {
     const familyInfos = familyArray.value.map((fam: any) => ({
       ...fam,
+       id: fam.id ?? null,                    // existing record id
+      IdClient: +fam.IdClient,
       name: fam.name?.trim() || '',
       idGender: fam.idGender ? +fam.idGender : null,
       idRelationship: fam.idRelationship ? +fam.idRelationship : null,
@@ -607,35 +596,37 @@ export class EmployeeListComponent implements OnInit {
     formData.append('employeeImage', this.selectedImageFile);
   }
 
-  // Submit formData
-  this.employeeService.createEmployee(formData).subscribe({
-    next: (res) => {
-      console.log("✅ Employee created", res);
-    },
-    error: (err) => {
-      console.error("❌ Error saving employee:", err);
-    }
-  });
+  
+
+  if (this.selectedEmployeeId) {
+      //formData.append('id', this.selectedEmployeeId!.toString());
+
+      this.employeeService.updateEmployee(formData).subscribe({
+        next: (res) => {
+          alert('Employee updated successfully!');
+          this.isReadonly = true;
+          this.loadEmployees();
+          this.viewEmployeeDetails(this.selectedEmployeeId!);
+        },
+        error: (err) => {
+          console.error('Error updating employee:', err);
+        }
+      });
+      } else {
+        this.employeeService.createEmployee(formData).subscribe({
+          next: (res) => {
+            alert('Employee created successfully!');
+            this.isReadonly = true;
+            this.loadEmployees();
+          },
+          error: (err) => {
+            console.error('Error creating employee:', err);
+          }
+        });
+      }
+
 }
 
-// onSubmit() {
-//   console.log('Form Submitted ✅'); // TESTING
-
-//   const formData = new FormData();
-//   formData.append('employeeName', this.employeeForm.get('employeeName')?.value);
-//   if (this.selectedImageFile) {
-//     formData.append('employeeImage', this.selectedImageFile);
-//   }
-
-//   formData.append('employeeEducationInfos', JSON.stringify(this.educationInfos.value));
-//   formData.append('employeeFamilyInfo', JSON.stringify(this.familyInfos.value));
-//   formData.append('employeeDocument', JSON.stringify(this.documents.value));
-//   formData.append('employeeProfessionalCertification', JSON.stringify(this.certifications.value));
-
-//   this.employeeService.createEmployee(formData).subscribe(res => {
-//     console.log('Saved successfully:', res);
-//   });
-// }
 
 
 
@@ -643,7 +634,8 @@ export class EmployeeListComponent implements OnInit {
 
 
 
-    onImageSelected(event: Event): void {
+
+    onEmployeeImageSelected(event: Event): void {
       const input = event.target as HTMLInputElement;
       if (input.files && input.files[0]) {
         const file = input.files[0];
@@ -667,6 +659,60 @@ export class EmployeeListComponent implements OnInit {
         reader.readAsDataURL(file);
       }
     }
+
+   onImageSelected(event: Event, index: number): void {
+  const input = event.target as HTMLInputElement;
+  if (input.files && input.files[0]) {
+    const file = input.files[0];
+    const documentsArray = this.employeeForm.get('employeeDocument') as FormArray;
+    if (documentsArray && documentsArray.at(index)) {
+      const docGroup = documentsArray.at(index);
+      docGroup.patchValue({
+        filename: file.name,
+        uploadedFileExtention: file.name.split('.').pop()
+      });
+      // Optionally store base64 if needed
+      const reader = new FileReader();
+      reader.onload = () => {
+        const base64String = (reader.result as string).split(',')[1];
+        docGroup.patchValue({
+          uploadedFileBase64: base64String // if you have this control
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+}
+
+
+
+
+    onDeleteEmployee(id: number) {
+    if (confirm('Are you sure you want to deactivate this employee?')) {
+      this.employeeService.deleteEmployee(id).subscribe({
+        next: (res: any) => {
+          alert(res.message);
+          this.loadEmployees(); // refresh list
+        },
+        error: (err) => {
+          console.error(err);
+          alert('Error deleting employee.');
+        }
+      });
+    }
+  }
+
+
+
+  private formatDateForInput(dateValue: string | Date): string {
+  const date = new Date(dateValue);
+  const year = date.getFullYear();
+  const month = ('0' + (date.getMonth() + 1)).slice(-2);
+  const day = ('0' + date.getDate()).slice(-2);
+  return `${year}-${month}-${day}`;
+}
+
+
 
 
 }
