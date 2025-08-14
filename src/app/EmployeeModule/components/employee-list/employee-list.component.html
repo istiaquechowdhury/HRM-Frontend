@@ -3,7 +3,7 @@
   <div class="d-flex justify-content-end mt-3 mb-2">
 
     <button class="btn btn-outline-primary mb-3 me-2"  (click)="onAddNew()">Add</button>
-    <button class="btn btn-outline-warning mb-3 me-2"  [disabled]="!selectedEmployeeId" (click)="onEdit(selectedEmployeeId)" >Update</button>
+    <button class="btn btn-outline-warning mb-3 me-2"  [disabled]="!selectedEmployeeId" (click)="onEdit(selectedEmployeeId!)" >Update</button>
     <button 
       (click)="onDeleteEmployee(selectedEmployeeId!)" 
       class="btn btn-outline-danger mb-3"
